@@ -1,0 +1,44 @@
+
+datasource db {
+  provider = "postgresql"
+  url      = env("") 
+}
+
+
+
+
+model Product {
+  sku   String   @id
+  title String
+  stocks StockInWarehouse[]
+  categories ProductCategory[]
+}
+
+model Category {
+  slug  String @id
+  title String
+  products ProductCategory[]
+}
+
+model Warehouse {
+  uuid   String   @id
+  title  String
+  stocks StockInWarehouse[]
+}
+
+model StockInWarehouse {
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [uuid])
+  productId   String
+  product     Product @relation(fields: [productId], references: [sku])
+  quantity    Int
+  @@id([warehouseId, productId])
+}
+
+model ProductCategory {
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [slug])
+  productId  String
+  product    Product  @relation(fields: [productId], references: [sku])
+  @@id([categoryId, productId])
+}
